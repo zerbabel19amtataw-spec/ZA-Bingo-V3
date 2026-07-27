@@ -1,4 +1,4 @@
-name: Deploy to Firebase Hosting
+name: Deploy Firebase Hosting
 
 on:
   push:
@@ -24,4 +24,4 @@ jobs:
       - name: Deploy to Firebase Hosting
         run: firebase deploy --only hosting --project za-bingo-7ad31
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ZA_BINGO_7AD31 }}
