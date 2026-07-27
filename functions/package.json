@@ -6,7 +6,7 @@
     "serve": "firebase emulators:start --only functions,database",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "createRooms": "node scripts/createRooms.js"
+    "createRooms": "node scripts/create-rooms.js"
   },
   "dependencies": {
     "firebase-admin": "^12.1.0",
