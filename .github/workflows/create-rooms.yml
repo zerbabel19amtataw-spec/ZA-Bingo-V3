@@ -23,3 +23,6 @@ jobs:
       - name: Create rooms
         working-directory: functions
         run: npm run createRooms
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FIREBASE_DATABASE_URL: ${{ secrets.FIREBASE_DATABASE_URL }}
