@@ -1,1 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <title>ZA Bingo V3</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<div id="app" class="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand">ZA Bingo</div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="settingsBtn" onclick="showScreen('settings')">⚙️</button>
+      <div class="balance-pill" id="balancePill">-- Br</div>
+    </div>
+  </header>
+
+  <!-- HOME SCREEN -->
+  <section id="screen-home" class="screen active">
+    <div class="container">
+      <div class="profile-summary" onclick="showScreen('profile')">
+        <div class="avatar-small" id="homeAvatar">👤</div>
+        <div class="profile-summary-text">
+          <div class="player-name" id="homePlayerName">Loading...</div>
+          <div class="player-sub" id="homePlayerSub">Tap to edit</div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Games Won</div>
+          <div class="stat-value" id="homeGamesWon">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Games Played</div>
+          <div class="stat-value" id="homeGamesPlayed">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Win Rate</div>
+          <div class="stat-value" id="homeWinRate">0%</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Won</div>
+          <div class="stat-value" id="homeTotalWinnings">0 Br</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="showScreen('rooms')">Play Now</button>
+
+      <div class="quick-links">
+        <button class="quick-link" onclick="showScreen('wallet')">💰 Wallet</button>
+        <button class="quick-link" onclick="showScreen('leaderboard')">🏆 Leaderboard</button>
+        <button class="quick-link" onclick="showScreen('transactions')">📋 History</button>
+        <button class="quick-link" onclick="showScreen('help')">❓ Help</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROFILE SCREEN -->
+  <section id="screen-profile" class="screen">
+    <div class="container">
+      <button class="btn-back" onclick="showScreen('home')">← Back</button>
+      <h1>Profile</h1>
+
+      <div class="profile-edit">
+        <div class="avatar-edit" id="avatarEdit">👤</div>
+        <input type="file" id="avatarFile" accept="image/*" style="display:none" onchange="updateAvatar(event)">
+        <button class="btn-small" onclick="document.getElementById('avatarFile').click()">Change Avatar</button>
+      </div>
+
+      <div class="form-group">
+        <label>Display Name</label>
+        <input type="text" id="displayNameInput" placeholder="Your name">
+        <button class="btn-small" onclick="updateDisplayName()">Save</button>
+      </div>
+
+      <div class="form-group">
+        <label>Telegram Username</label>
+        <div class="text-field" id="profileUsername">@user</div>
+      </div>
+
+      <div class="form-group">
+        <label>Telegram ID</label>
+        <div class="text-field" id="profileTelegramId">-</div>
+      </div>
+
+      <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" id="phoneInput" placeholder="+251 9 xx xx xx xx">
+        <button class="btn-small" onclick="updatePhone()">Save</button>
+      </div>
+
+      <div class="form-group">
+        <label>Current Balance</label>
+        <div class="text-field balance-text" id="profileBalance">0 Br</div>
+      </div>
+
+      <div class="stats-section">
+        <h2>Statistics</h2>
+        <div class="stat-row">
+          <span>Games Played</span>
+          <span id="profileGamesPlayed">0</span>
+        </div>
+        <div class="stat-row">
+          <span>Games Won</span>
+          <span id="profileGamesWon">0</span>
+        </div>
+        <div class="stat-row">
+          <span>Win Rate</span>
+          <span id="profileWinRate">0%</span>
+        </div>
+        <div class="stat-row">
+          <span>Total Winnings</span>
+          <span id="profileTotalWinnings">0 Br</span>
+        </div>
+        <div class="stat-row">
+          <span>Join Date</span>
+          <span id="profileJoinDate">-</span>
+        </div>
+      </div>
+
+      <div class="referral-section">
+        <h2>Referral Code</h2>
+        <div class="referral-code" id="referralCode">LOADING</div>
+        <button class="btn-small" onclick="copyReferralCode()">Copy Code</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- WALLET SCREEN -->
+  <section id="screen-wallet" class="screen">
+    <div class="container">
+      <button class="btn-back" onclick="showScreen('home')">← Back</button>
+      <h1>Wallet</h1>
+
+      <div class="balance-display">
+        <div class="balance-main" id="walletBalance">0 Br</div>
+        <div class="balance-reserved" id="walletReserved"></div>
+      </div>
+
+      <div class="wallet-tabs">
+        <button class="tab-btn active" onclick="switchWalletTab('deposit')">Deposit</button>
+        <button class="tab-btn" onclick="switchWalletTab('withdraw')">Withdraw</button>
+      </div>
+
+      <!-- DEPOSIT TAB -->
+      <div id="deposit-tab" class="wallet-tab active">
+        <h2>Deposit</h2>
+        <p class="hint">Choose your payment method</p>
+
+        <div class="payment-methods">
+          <button class="payment-method" onclick="selectPaymentMethod('telebirr')">
+            <div class="method-icon">📱</div>
+            <div class="method-name">Telebirr</div>
+          </button>
+          <button class="payment-method" onclick="selectPaymentMethod('cbe')">
+            <div class="method-icon">🏦</div>
+            <div class="method-name">CBE</div>
+          </button>
+        </div>
+
+        <form id="depositForm" style="display:none;">
+          <div class="form-group">
+            <label>Amount (Birr)</label>
+            <input type="number" id="depositAmount" placeholder="Minimum 50" min="50">
+          </div>
+          <div class="form-group">
+            <label>SMS Confirmation Text</label>
+            <textarea id="depositSMS" placeholder="Paste the SMS confirmation..."></textarea>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="submitDeposit()">Request Deposit</button>
+          <button type="button" class="btn btn-secondary" onclick="cancelPaymentMethod()">Cancel</button>
+        </form>
+      </div>
+
+      <!-- WITHDRAW TAB -->
+      <div id="withdraw-tab" class="wallet-tab" style="display:none;">
+        <h2>Withdraw</h2>
+        <p class="hint">Minimum withdrawal: 50 Br</p>
+
+        <form id="withdrawForm">
+          <div class="form-group">
+            <label>Amount (Birr)</label>
+            <input type="number" id="withdrawAmount" placeholder="Minimum 50" min="50">
+          </div>
+          <div class="form-group">
+            <label>Destination (Phone/Account)</label>
+            <input type="text" id="withdrawDest" placeholder="Your phone or account number">
+          </div>
+          <button type="button" class="btn btn-primary" onclick="submitWithdrawal()">Request Withdrawal</button>
+        </form>
+      </div>
+
+      <div id="walletMessage" class="message-box"></div>
+    </div>
+  </section>
+
+  <!-- TRANSACTION HISTORY SCREEN -->
+  <section id="screen-transactions" class="screen">
+    <div class="container">
+      <button class="btn-back" onclick="showScreen('home')">← Back</button>
+      <h1>Transaction History</h1>
+      
+      <div class="transactions-list" id="transactionsList">
+        <p class="loading">Loading...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD SCREEN -->
+  <section id="screen-leaderboard" class="screen">
+    <div class="container">
+      <button class="btn-back" onclick="showScreen('home')">← Back</button>
+      <h1>Leaderboard</h1>
+
+      <div class="leaderboard-tabs">
+        <button class="tab-btn active" onclick="switchLeaderboardTab('wins')">Most Wins</button>
+        <button class="tab-btn" onclick="switchLeaderboardTab('winnings')">Highest Winnings</button>
+        <button class="tab-btn" onclick="switchLeaderboardTab('played')">Most Games</button>
+      </div>
+
+      <div id="leaderboardList" class="leaderboard-list">
+        <p class="loading">Loading...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ROOMS SCREEN -->
+  <section id="screen-rooms" class="screen">
+    <div class="container">
+      <button class="btn-back" onclick="showScreen('home')">← Back</button>
+      <h1>Game Rooms</h1>
+      <p class="hint">Choose a room and play</p>
+
+      <div class="rooms-list" id="roomsList">
+        <p class="loading">Loading rooms...</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WAITING ROOM (cartela selection) -->
+  <section id="screen-waiting" class="screen">
+    <div class="container">
+      <button class="btn-back" onclick="leaveRoom()">← Leave</button>
+      <h1>Pick Your Cartelas</h1>
+
+      <div class="waiting-info">
+        <div class="info-item">
+          <span>Players Ready:</span>
+          <span id="readyCount">0</span>
+        </div>
+        <div class="info-item">
+          <span>Prize Pool:</span>
+          <span id="prizePoolWaiting">0 Br</span>
+        </div>
+        <div class="info-item" id="countdownDisplay" style="display:none;">
+          <span>Game starts in:</span>
+          <span id="countdownSeconds">--</span>
+        </div>
+      </div>
+
+      <p class="hint">Select up to 2 cartelas (click to toggle)</p>
+      <div class="cartelas-grid" id="cartelasGrid">
+        <p class="loading">Loading cartelas...</p>
+      </div>
+
+      <button class="btn btn-primary" id="readyBtn" onclick="markPlayerReady()" disabled>Ready to Play</button>
+    </div>
+  </section>
+
+  <!-- GAME SCREEN -->
+  <section id="screen-game" class="screen">
+    <div class="container">
+      <div class="game-header">
+        <div class="game-info">
+          <div class="prize-display" id="prizeDisplay">0 Br</div>
+          <div class="players-count" id="playersCount">0 players</div>
+        </div>
+        <button class="btn-icon" onclick="toggleGameChat()">💬</button>
+      </div>
+
+      <div class="called-numbers">
+        <div class="current-number" id="currentNumber">--</div>
+        <div class="history-strip" id="historyStrip"></div>
+      </div>
+
+      <div class="bingo-card-container">
+        <div class="bingo-header">
+          <span>B</span><span>I</span><span>N</span><span>G</span><span>O</span>
+        </div>
+        <div class="bingo-card" id="bingoCard"></div>
+      </div>
+
+      <div class="game-controls">
+        <label class="checkbox">
+          <input type="checkbox" id="autoMarkCheckbox" onchange="toggleAutoMark()">
+          <span>Auto Mark</span>
+        </label>
+        <button class="btn btn-primary btn-large" id="claimBtn" onclick="claimBingo()">🎉 CLAIM BINGO 🎉</button>
+      </div>
+
+      <div id="gameMessage" class="message-box"></div>
+    </div>
+  </section>
+
+  <!-- GAME CHAT (overlay) -->
+  <div id="chatOverlay" class="overlay" style="display:none;">
+    <div class="chat-panel">
+      <div class="chat-header">
+        <h2>Room Chat</h2>
+        <button class="btn-icon" onclick="toggleGameChat()">✕</button>
+      </div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Type a message..." onkeypress="handleChatKeypress(event)">
+        <button class="btn-icon" onclick="sendChatMessage()">→</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS SCREEN -->
+  <section id="screen-settings" class="screen">
+    <div class="container">
+      <button class="btn-back" onclick="showScreen('home')">← Back</button>
+      <h1>Settings</h1>
+
+      <div class="settings-section">
+        <h2>Sound & Notifications</h2>
+        <label class="checkbox">
+          <input type="checkbox" id="soundToggle" checked>
+          <span>Enable Sound</span>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" id="notificationsToggle" checked>
+          <span>Enable Notifications</span>
+        </label>
+      </div>
+
+      <div class="settings-section">
+        <h2>Account</h2>
+        <button class="btn btn-danger" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- HELP SCREEN -->
+  <section id="screen-help" class="screen">
+    <div class="container">
+      <button class="btn-back" onclick="showScreen('home')">← Back</button>
+      <h1>Help & Rules</h1>
+
+      <div class="help-section">
+        <h2>How to Play</h2>
+        <ol>
+          <li>Join a room and pick up to 2 cartelas</li>
+          <li>Wait for other players to get ready</li>
+          <li>When the countdown finishes, numbers will be called</li>
+          <li>Mark numbers or use Auto Mark</li>
+          <li>First to complete a pattern wins the prize</li>
+        </ol>
+      </div>
+
+      <div class="help-section">
+        <h2>Winning Patterns</h2>
+        <ul>
+          <li><strong>Line:</strong> Any horizontal row</li>
+          <li><strong>Column:</strong> Any vertical column</li>
+          <li><strong>Diagonal:</strong> Either corner-to-corner</li>
+          <li><strong>Four Corners:</strong> All four corner squares</li>
+          <li><strong>Full House:</strong> All 25 squares</li>
+        </ul>
+      </div>
+
+      <div class="help-section">
+        <h2>Wallet</h2>
+        <p>Deposit via Telebirr or CBE. Withdrawals are processed within 24 hours.</p>
+      </div>
+
+      <div class="help-section">
+        <h2>Contact Support</h2>
+        <p>For issues, contact us on Telegram: @zabingo_support</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WINNER MODAL -->
+  <div id="winnerModal" class="modal" style="display:none;">
+    <div class="modal-content winner-popup">
+      <div class="confetti-container" id="confettiContainer"></div>
+      <h1>🎉 WINNER! 🎉</h1>
+      <div class="winner-info">
+        <div class="winner-name" id="winnerName">Player</div>
+        <div class="winner-prize" id="winnerPrize">0 Br</div>
+        <div class="winner-pattern" id="winnerPattern">Pattern</div>
+      </div>
+      <button class="btn btn-primary" onclick="dismissWinner()">Play Again</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="firebase.js"></script>
+<script src="utils.js"></script>
+<script src="auth.js"></script>
+<script src="profile.js"></script>
+<script src="wallet.js"></script>
+<script src="rooms.js"></script>
+<script src="game.js"></script>
+<script src="leaderboard.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
