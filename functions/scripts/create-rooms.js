@@ -1,8 +1,13 @@
+// Run once: node scripts/create-rooms.js
+
 const { initializeApp } = require('firebase-admin/app');
 const { getDatabase } = require('firebase-admin/database');
 const { generateCartela } = require('../bingoLogic');
 
-initializeApp();
+initializeApp({
+  databaseURL: "https://za-bingo-7ad31-default-rtdb.firebaseio.com/"
+});
+
 const db = getDatabase();
 
 const ROOMS = [
@@ -14,8 +19,13 @@ const ROOMS = [
 (async () => {
   for (const room of ROOMS) {
     const cartelas = {};
+
     for (let i = 1; i <= 150; i++) {
-      cartelas[i] = { numbers: generateCartela(), locked: false, lockedBy: null };
+      cartelas[i] = {
+        numbers: generateCartela(),
+        locked: false,
+        lockedBy: null
+      };
     }
 
     await db.ref(`rooms/${room.id}`).set({
