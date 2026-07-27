@@ -1,7 +1,6 @@
-// Run once: node scripts/create-rooms.js
 const { initializeApp } = require('firebase-admin/app');
 const { getDatabase } = require('firebase-admin/database');
-const { generateCartela } = require('../functions/bingoLogic');
+const { generateCartela } = require('../bingoLogic');
 
 initializeApp();
 const db = getDatabase();
@@ -18,6 +17,7 @@ const ROOMS = [
     for (let i = 1; i <= 150; i++) {
       cartelas[i] = { numbers: generateCartela(), locked: false, lockedBy: null };
     }
+
     await db.ref(`rooms/${room.id}`).set({
       entryFee: room.entryFee,
       maxPlayers: room.maxPlayers,
@@ -26,7 +26,9 @@ const ROOMS = [
       prizePool: 0,
       cartelas,
     });
+
     console.log(`Created ${room.id} with 150 cartelas`);
   }
+
   process.exit(0);
 })();
