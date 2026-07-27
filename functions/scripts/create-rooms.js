@@ -2,7 +2,7 @@
 
 const { cert, initializeApp } = require('firebase-admin/app');
 const { getDatabase } = require('firebase-admin/database');
-const { generateCartela } = require('../functions/bingoLogic');
+const { generateCartela } = require('../bingoLogic');
 
 // Firebase Admin authentication
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
