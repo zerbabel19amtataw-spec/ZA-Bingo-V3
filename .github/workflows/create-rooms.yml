@@ -1,1 +1,25 @@
+name: Create Bingo Rooms
 
+on:
+  workflow_dispatch:
+
+jobs:
+  create_rooms:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: functions
+        run: npm install
+
+      - name: Create rooms
+        working-directory: functions
+        run: npm run createRooms
