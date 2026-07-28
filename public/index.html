@@ -27,14 +27,6 @@
   <!-- HOME SCREEN -->
   <section id="screen-home" class="screen active">
     <div class="container">
-      <div class="profile-summary" onclick="showProfileScreen()">
-        <div class="avatar-small" id="homeAvatar">👤</div>
-        <div class="profile-summary-text">
-          <div class="player-name" id="homePlayerName">Loading...</div>
-          <div class="player-sub" id="homePlayerSub">Tap to edit</div>
-        </div>
-      </div>
-
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-label">Games Won</div>
@@ -65,76 +57,7 @@
     </div>
   </section>
 
-  <!-- PROFILE SCREEN -->
-  <section id="screen-profile" class="screen">
-    <div class="container">
-      <button class="btn-back" onclick="showScreen('home')">← Back</button>
-      <h1>Profile</h1>
-
-      <div class="profile-edit">
-        <div class="avatar-edit" id="avatarEdit">👤</div>
-        <input type="file" id="avatarFile" accept="image/*" style="display:none" onchange="updateAvatar(event)">
-        <button class="btn-small" onclick="document.getElementById('avatarFile').click()">Change Avatar</button>
-      </div>
-
-      <div class="form-group">
-        <label>Display Name</label>
-        <input type="text" id="displayNameInput" placeholder="Your name">
-        <button class="btn-small" onclick="updateDisplayName()">Save</button>
-      </div>
-
-      <div class="form-group">
-        <label>Telegram Username</label>
-        <div class="text-field" id="profileUsername">@user</div>
-      </div>
-
-      <div class="form-group">
-        <label>Telegram ID</label>
-        <div class="text-field" id="profileTelegramId">-</div>
-      </div>
-
-      <div class="form-group">
-        <label>Phone Number</label>
-        <input type="tel" id="phoneInput" placeholder="+251 9 xx xx xx xx">
-        <button class="btn-small" onclick="updatePhone()">Save</button>
-      </div>
-
-      <div class="form-group">
-        <label>Current Balance</label>
-        <div class="text-field balance-text" id="profileBalance">0 Br</div>
-      </div>
-
-      <div class="stats-section">
-        <h2>Statistics</h2>
-        <div class="stat-row">
-          <span>Games Played</span>
-          <span id="profileGamesPlayed">0</span>
-        </div>
-        <div class="stat-row">
-          <span>Games Won</span>
-          <span id="profileGamesWon">0</span>
-        </div>
-        <div class="stat-row">
-          <span>Win Rate</span>
-          <span id="profileWinRate">0%</span>
-        </div>
-        <div class="stat-row">
-          <span>Total Winnings</span>
-          <span id="profileTotalWinnings">0 Br</span>
-        </div>
-        <div class="stat-row">
-          <span>Join Date</span>
-          <span id="profileJoinDate">-</span>
-        </div>
-      </div>
-
-      <div class="referral-section">
-        <h2>Referral Code</h2>
-        <div class="referral-code" id="referralCode">LOADING</div>
-        <button class="btn-small" onclick="copyReferralCode()">Copy Code</button>
-      </div>
-    </div>
-  </section>
+  
 
   <!-- WALLET SCREEN -->
   <section id="screen-wallet" class="screen">
@@ -411,7 +334,6 @@
 <script src="firebase.js"></script>
 <script src="utils.js"></script>
 <script src="auth.js"></script>
-<script src="profile.js"></script>
 <script src="wallet.js"></script>
 <script src="rooms.js"></script>
 <script src="game.js"></script>
