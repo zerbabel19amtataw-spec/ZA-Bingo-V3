@@ -3,6 +3,8 @@
 function showProfileScreen() {
   showScreen('profile');
 
+  console.log("TELEGRAM ID:", tg.initDataUnsafe.user.id);
+
   const telegramId = String(tg.initDataUnsafe.user.id);
   loadProfileData(telegramId);
 }
