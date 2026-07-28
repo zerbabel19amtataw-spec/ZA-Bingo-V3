@@ -71,10 +71,7 @@ const screenObservers = {
   wallet: () => loadWalletBalance(),
   transactions: () => loadTransactionHistory(),
   leaderboard: () => loadLeaderboard(),
-  profile: () => {
-    const telegramId = String(tg.initDataUnsafe.user.id);
-    loadProfileData(telegramId);
-  },
+ 
 };
 
 document.addEventListener('DOMContentLoaded', () => {
