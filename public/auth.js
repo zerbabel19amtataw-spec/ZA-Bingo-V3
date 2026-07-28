@@ -33,10 +33,11 @@ auth.onAuthStateChanged(async (user) => {
 
   currentUser = user;
   console.log('User authenticated:', user.uid);
-  
-  // Load player data
-  loadPlayerData(user.uid);
-  
+
+  // Load player data using Telegram ID
+  const telegramId = String(tg.initDataUnsafe.user.id);
+  loadPlayerData(telegramId);
+
   // Show home screen
   showScreen('home');
 });
