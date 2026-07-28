@@ -71,7 +71,10 @@ const screenObservers = {
   wallet: () => loadWalletBalance(),
   transactions: () => loadTransactionHistory(),
   leaderboard: () => loadLeaderboard(),
-  profile: () => loadProfileData(currentUser?.uid),
+  profile: () => {
+    const telegramId = String(tg.initDataUnsafe.user.id);
+    loadProfileData(telegramId);
+  },
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -110,7 +113,7 @@ window.addEventListener('online', () => {
 
 window.addEventListener('offline', () => {
   isOnline = false;
-  console.log('Gone offline');
+  console.log('No internet connection');
   showMessage('No internet connection', 'error');
   notificationHaptic('warning');
 });
