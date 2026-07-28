@@ -3,6 +3,7 @@
 async function initializeAuth() {
   try {
     const tgInitData = tg ? tg.initData : '';
+
     if (!tgInitData) {
       console.error('No Telegram initData available');
       setTimeout(initializeAuth, 1000);
@@ -16,6 +17,7 @@ async function initializeAuth() {
     // Sign in with the custom token
     await auth.signInWithCustomToken(data.token);
     console.log('Authenticated successfully');
+
   } catch (error) {
     console.error('Auth initialization failed:', error);
     handleError(error);
@@ -23,10 +25,11 @@ async function initializeAuth() {
   }
 }
 
+
 // Listen for auth state changes
 auth.onAuthStateChanged(async (user) => {
+
   if (!user) {
-    // Try to sign in again if not authenticated
     setTimeout(initializeAuth, 500);
     return;
   }
@@ -42,48 +45,77 @@ auth.onAuthStateChanged(async (user) => {
   showScreen('home');
 });
 
+
 // Load player profile data
-function loadPlayerData(uid) {
-  const playerRef = db.ref(`players/${uid}`);
+function loadPlayerData(telegramId) {
+
+  const playerRef = db.ref(`players/${telegramId}`);
+
   setListener('playerData', playerRef.on('value', (snap) => {
+
     const player = snap.val();
+
     if (!player) return;
+
 
     // Update topbar balance
     setText('balancePill', formatCurrency(player.balance || 0));
 
+
     // Store player data globally
     window.playerData = player;
 
+
     // Update home screen
     updateHomeScreen(player);
+
   }));
 }
 
+
 function updateHomeScreen(player) {
+
   if (!document.getElementById('screen-home').classList.contains('active')) return;
-  
+
+
   setText('homePlayerName', player.displayName || 'Player');
   setText('homePlayerSub', `@${player.username || 'user'}`);
-  setText('homeGamesWon', player.gamesWon || 0);
-  setText('homeGamesPlayed', player.gamesPlayed || 0);
-  
-  const winRate = player.gamesPlayed > 0 
-    ? Math.round((player.gamesWon / player.gamesPlayed) * 100)
+
+
+  // Firebase field names
+  setText('homeGamesWon', player.gameswon || 0);
+  setText('homeGamesPlayed', player.gamesplayed || 0);
+
+
+  const winRate = player.gamesplayed > 0
+    ? Math.round((player.gameswon / player.gamesplayed) * 100)
     : 0;
+
+
   setText('homeWinRate', `${winRate}%`);
-  setText('homeTotalWinnings', formatCurrency(player.totalWinnings || 0));
+
+
+  setText(
+    'homeTotalWinnings',
+    formatCurrency(player.totalWinings || 0)
+  );
 }
+
 
 // Logout
 function logout() {
+
   if (confirm('Are you sure you want to logout?')) {
+
     clearAllListeners();
+
     auth.signOut().then(() => {
       window.location.reload();
     });
+
   }
 }
+
 
 // Start auth on page load
 document.addEventListener('DOMContentLoaded', () => {
