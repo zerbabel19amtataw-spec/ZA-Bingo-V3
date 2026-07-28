@@ -1,7 +1,6 @@
 // Profile screen management
 
 function showProfileScreen() {
-  if (!currentUser) return;
   showScreen('profile');
 
   const telegramId = String(tg.initDataUnsafe.user.id);
@@ -10,6 +9,7 @@ function showProfileScreen() {
 
 function loadProfileData(uid) {
   const playerRef = db.ref(`players/${uid}`);
+
   setListener('profileData', playerRef.on('value', (snap) => {
     const player = snap.val();
     if (!player) return;
@@ -31,17 +31,19 @@ function loadProfileData(uid) {
       : 0;
 
     document.getElementById('profileWinRate').textContent = `${winRate}%`;
-    document.getElementById('profileTotalWinnings').textContent = formatCurrency(player.totalWinnings || 0);
-    document.getElementById('profileJoinDate').textContent = formatDate(player.registrationDate);
+    document.getElementById('profileTotalWinnings').textContent =
+      formatCurrency(player.totalWinnings || 0);
+
+    document.getElementById('profileJoinDate').textContent =
+      formatDate(player.registrationDate);
 
     // Referral code
-    document.getElementById('referralCode').textContent = player.referralCode || 'LOADING';
+    document.getElementById('referralCode').textContent =
+      player.referralCode || 'LOADING';
   }));
 }
 
 function updateDisplayName() {
-  if (!currentUser) return;
-
   const newName = document.getElementById('displayNameInput').value.trim();
 
   if (!newName || newName.length < 1 || newName.length > 50) {
@@ -61,8 +63,6 @@ function updateDisplayName() {
 }
 
 function updatePhone() {
-  if (!currentUser) return;
-
   const phone = document.getElementById('phoneInput').value.trim();
 
   if (phone && !validatePhoneNumber(phone)) {
@@ -87,9 +87,15 @@ function updateAvatar(event) {
 
   const reader = new FileReader();
 
-  reader.onload = (e) => {
-    const firstChar = document.getElementById('displayNameInput').value.charAt(0).toUpperCase();
-    const emoji = firstChar.match(/[A-Z]/) ? firstChar : '👤';
+  reader.onload = () => {
+    const firstChar =
+      document.getElementById('displayNameInput').value
+      .charAt(0)
+      .toUpperCase();
+
+    const emoji = firstChar.match(/[A-Z]/)
+      ? firstChar
+      : '👤';
 
     const telegramId = String(tg.initDataUnsafe.user.id);
     const playerRef = db.ref(`players/${telegramId}`);
