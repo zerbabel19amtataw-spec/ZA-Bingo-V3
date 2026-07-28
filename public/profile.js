@@ -14,6 +14,7 @@ function loadProfileData(uid) {
 
   setListener('profileData', playerRef.on('value', (snap) => {
     const player = snap.val();
+    console.log("PROFILE DATA:", player);
     if (!player) return;
 
     // Update profile fields
