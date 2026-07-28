@@ -25,17 +25,18 @@ function loadProfileData(uid) {
     document.getElementById('phoneInput').value = player.phoneNumber || '';
     document.getElementById('profileBalance').textContent = formatCurrency(player.balance || 0);
 
-    // Statistics
-    document.getElementById('profileGamesPlayed').textContent = player.gamesPlayed || 0;
-    document.getElementById('profileGamesWon').textContent = player.gamesWon || 0;
+    // Statistics (matches your Firebase field names)
+    document.getElementById('profileGamesPlayed').textContent = player.gamesplayed || 0;
+    document.getElementById('profileGamesWon').textContent = player.gameswon || 0;
 
-    const winRate = player.gamesPlayed > 0
-      ? Math.round((player.gamesWon / player.gamesPlayed) * 100)
+    const winRate = (player.gamesplayed || 0) > 0
+      ? Math.round((player.gameswon || 0) / player.gamesplayed * 100)
       : 0;
 
     document.getElementById('profileWinRate').textContent = `${winRate}%`;
+
     document.getElementById('profileTotalWinnings').textContent =
-      formatCurrency(player.totalWinnings || 0);
+      formatCurrency(player.totalWinings || 0);
 
     document.getElementById('profileJoinDate').textContent =
       formatDate(player.registrationDate);
